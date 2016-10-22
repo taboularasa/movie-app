@@ -13,21 +13,32 @@ describe("omdb service", function () {
   });
 
   describe("search", function () {
+    var response;
+    var expectedURL = 'http://www.omdbapi.com/?v=1&s=star%20wars';
+
     it("returns search movie data", function () {
-      var response;
-
-      var expectedURL = 'http://www.omdbapi.com/?v=1&s=star%20wars';
-
       $httpBackend.when('GET', expectedURL).respond(200, movieData);
 
       omdbApi.search('star wars')
-        .then(function(data) {
-          response = data;
-        })
+        .then(function(data) { response = data; });
 
       $httpBackend.flush();
 
       expect(response).toEqual(movieData);
+    });
+
+    it("handles errors", function () {
+      var expectedError = 'Error!';
+
+      $httpBackend.when('GET', expectedURL).respond(500);
+
+      omdbApi.search('star wars')
+        .then(function(data) {})
+        .catch(function() { response =  expectedError; });
+
+      $httpBackend.flush();
+
+      expect(response).toEqual(expectedError);
     });
   });
 

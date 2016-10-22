@@ -6,7 +6,12 @@ function omdbApi($http, $q) {
 
   function httpPromise(url) {
     var deferred = $q.defer();
-    $http.get(url).success(function(data) { deferred.resolve(data); });
+    $http.get(url)
+      .success(function(data) { deferred.resolve(data); })
+      .error(function() {
+        deferred.reject();
+      });
+
     return deferred.promise;
   }
 
